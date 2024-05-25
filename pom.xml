@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.project</groupId>
-    <artifactId>webchat_java</artifactId>
+    <artifactId>webchat_java</artifactId>+
     <version>0.0.1-SNAPSHOT</version>
     <name>webchat_java</name>
     <description>webchat_java</description>
@@ -77,8 +77,16 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
+        <!-- Hutool实用工具 -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.20</version>
+        </dependency>
 
     </dependencies>
+
+
 
     <build>
         <plugins>

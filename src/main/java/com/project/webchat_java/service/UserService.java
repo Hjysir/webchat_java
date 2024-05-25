@@ -1,14 +1,17 @@
 package com.project.webchat_java.service;
 
+import cn.hutool.crypto.digest.DigestUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.webchat_java.dto.RequestDto;
 import com.project.webchat_java.entity.User;
 import com.project.webchat_java.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class UserService {
 
     private UserMapper userMapper;
@@ -22,54 +25,79 @@ public class UserService {
         this.commenService = commenService;
     }
 
+    public boolean CheckOnPassWord(String input, String userPassWord) {
+        return String.valueOf(input.hashCode()).equals(userPassWord);
+    }
+
     public RequestDto userRegister(User userinfo) {
         RequestDto requestDto = new RequestDto();
-        System.out.println(userinfo.getUserName());
-        System.out.println(userinfo.getPassWord().hashCode());
+
+        log.info("用户尝试注册：{}", userinfo.getUserName());
+
         if (userMapper.getUserByUsername(userinfo.getUserName()) != null) {
+
             requestDto.setCode(400);
             requestDto.setMessage("用户名已存在");
+
         } else {
-            userinfo.setPassWord(String.valueOf(userinfo.getPassWord().hashCode()));
+
+            userinfo.setPassWord(String.valueOf(DigestUtil.md5Hex(userinfo.getPassWord())));
             userMapper.insertUser(userinfo);
+
             requestDto.setCode(200);
             requestDto.setMessage("注册成功");
+
         }
         return requestDto;
     }
 
     public RequestDto userLogin(User userinfo) {
+        // 返回的数据
         RequestDto requestDto = new RequestDto();
-        System.out.println(userinfo.getUserName());
-        User user = userMapper.getUserByUsername(userinfo.getUserName());
-        User userByEmail = userMapper.getUserByEmail(userinfo.getEmail());
-        System.out.println(userinfo.getPassWord().hashCode());
-        if (user == null && userByEmail == null) {
-            requestDto.setCode(400);
-            requestDto.setMessage("用户名不存在");
-        } else if (user != null && !String.valueOf(user.getPassWord()).equals(String.valueOf(userinfo.getPassWord().hashCode())) ||
-                userByEmail != null && !String.valueOf(userByEmail.getPassWord()).equals(String.valueOf(userinfo.getPassWord().hashCode()))) {
-            requestDto.setCode(400);
-            requestDto.setMessage("密码错误");
-        } else {
-            requestDto.setCode(200);
-            requestDto.setMessage("登录成功");
-            requestDto.setData(user);
-            if (user != null) {
-                user.setOnline(true);
-            }
 
-            // 登录成功后，将用户信息存储到Redis中
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                String userJson = objectMapper.writeValueAsString(user);
-                if (user != null) {
-                    redisService.set(user.getUserName(), userJson);
-                }
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
+        User user = userMapper.getUserByUsername(userinfo.getUserName());
+
+        // springboot日志输出
+        log.info("用户尝试登录：{}", userinfo.getUserName());
+
+        if (user == null) {
+            // 检查邮箱是否存在
+            user = userMapper.getUserByEmail(userinfo.getEmail());
+
+            if (user == null) {
+                requestDto.setCode(400);
+                requestDto.setMessage("用户名不存在");
             }
         }
+        else {
+            String password = String.valueOf(user.getPassWord());
+
+            if (CheckOnPassWord(userinfo.getPassWord(), password)) {
+                requestDto.setCode(200);
+                requestDto.setMessage("登录成功");
+                requestDto.setData(user);
+
+                // 登录成功后，将用户信息存储到Redis中
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                try {
+                    String userJson = objectMapper.writeValueAsString(user);
+
+                    if (user != null) {
+                        redisService.set(user.getUserName(), userJson);
+                    }
+
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            else {
+                requestDto.setCode(400);
+                requestDto.setMessage("密码错误");
+            }
+        }
+
         return requestDto;
     }
 
