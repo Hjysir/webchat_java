@@ -9,24 +9,31 @@ import org.apache.ibatis.annotations.Update;
 
 public interface UserMapper extends BaseMapper<User> {
 
-    @Select("SELECT * FROM users WHERE username = #{username}")
+    @Select("SELECT * FROM user " +
+            "WHERE name = #{username}")
     User getUserByUsername(String username);
 
-    @Select("SELECT * FROM users WHERE id = #{id}")
+    @Select("SELECT * " +
+            "FROM user " +
+            "WHERE id = #{id}")
     User getUserById(String id);
 
-    @Insert("INSERT INTO users (username, password, email, avatar, isonline) VALUES (#{userName}, #{passWord}, #{email}, 'https://userpic.codeforces.org/no-title.jpg', false)")
+    @Insert("INSERT INTO users (name, password, email, avatar, phone) " +
+            "VALUES (#{name}, #{password}, #{email}, 'https://userpic.codeforces.org/no-title.jpg', phone)")
     void insertUser(User user);
 
-    @Select("SELECT * FROM users WHERE email = #{email}")
+    @Select("SELECT * " +
+            "FROM user " +
+            "WHERE email = #{email}")
     User getUserByEmail(String email);
 
-    @Update("UPDATE users SET avatar = #{avatar} WHERE id = #{id}")
+    @Update("UPDATE user " +
+            "SET avatar = #{avatar} " +
+            "WHERE id = #{id}")
     void updateUserAvatar(String avatar, String id);
 
-    @Update("UPDATE users SET password = #{password} WHERE id = #{userId}")
+    @Update("UPDATE user " +
+            "SET password = #{password} " +
+            "WHERE id = #{userId}")
     void updateUserPassword(String password, String userId);
-
-    @Update("UPDATE users SET isonline = false WHERE username = #{username}")
-    void userLogout(String username);
 }

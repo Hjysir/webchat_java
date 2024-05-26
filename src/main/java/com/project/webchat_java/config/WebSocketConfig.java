@@ -23,9 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         // 全局使用的消息前缀（客户端订阅路径上会体现出来）
         config.setApplicationDestinationPrefixes("/app");
-
-        // 点对点使用的订阅前缀（客户端订阅路径上会体现出来），不设置的话，默认也是/user/
-        config.setUserDestinationPrefix("/user");
+        
     }
 
 }

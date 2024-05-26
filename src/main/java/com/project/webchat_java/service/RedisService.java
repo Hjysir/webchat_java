@@ -16,11 +16,6 @@ public class RedisService {
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
-    public void publish(String ChatRoomId, String message) {
-        String channel = CHATROOM_PREFIX + ChatRoomId;
-        stringRedisTemplate.convertAndSend(channel, message);
-    }
-
     public void set(String key, String value) {
         stringRedisTemplate.opsForValue().set(key, value);
     }

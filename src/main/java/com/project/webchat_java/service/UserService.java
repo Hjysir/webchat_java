@@ -32,16 +32,16 @@ public class UserService {
     public RequestDto userRegister(User userinfo) {
         RequestDto requestDto = new RequestDto();
 
-        log.info("用户尝试注册：{}", userinfo.getUserName());
+        log.info("用户尝试注册：{}", userinfo.getName());
 
-        if (userMapper.getUserByUsername(userinfo.getUserName()) != null) {
+        if (userMapper.getUserByUsername(userinfo.getName()) != null) {
 
             requestDto.setCode(400);
             requestDto.setMessage("用户名已存在");
 
         } else {
 
-            userinfo.setPassWord(String.valueOf(DigestUtil.md5Hex(userinfo.getPassWord())));
+            userinfo.setPassword(String.valueOf(DigestUtil.md5Hex(userinfo.getPassword())));
             userMapper.insertUser(userinfo);
 
             requestDto.setCode(200);
@@ -55,10 +55,10 @@ public class UserService {
         // 返回的数据
         RequestDto requestDto = new RequestDto();
 
-        User user = userMapper.getUserByUsername(userinfo.getUserName());
+        User user = userMapper.getUserByUsername(userinfo.getName());
 
         // springboot日志输出
-        log.info("用户尝试登录：{}", userinfo.getUserName());
+        log.info("用户尝试登录：{}", userinfo.getName());
 
         if (user == null) {
             // 检查邮箱是否存在
@@ -70,9 +70,9 @@ public class UserService {
             }
         }
         else {
-            String password = String.valueOf(user.getPassWord());
+            String password = String.valueOf(user.getPassword());
 
-            if (CheckOnPassWord(userinfo.getPassWord(), password)) {
+            if (CheckOnPassWord(userinfo.getPassword(), password)) {
                 requestDto.setCode(200);
                 requestDto.setMessage("登录成功");
                 requestDto.setData(user);
@@ -83,9 +83,7 @@ public class UserService {
                 try {
                     String userJson = objectMapper.writeValueAsString(user);
 
-                    if (user != null) {
-                        redisService.set(user.getUserName(), userJson);
-                    }
+                    redisService.set(user.getName(), userJson);
 
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
@@ -111,10 +109,7 @@ public class UserService {
         userMapper.updateUserAvatar(avatar, userId);
     }
 
-    public void userLogout(String username) {
-        userMapper.userLogout(username);
-        redisService.delete(username);
-    }
+    public void userLogout(String username) { redisService.delete(username); }
 
     public User getUserById(String userId) {
         return userMapper.getUserById(userId);

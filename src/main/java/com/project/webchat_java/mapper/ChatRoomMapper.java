@@ -10,30 +10,42 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 public interface ChatRoomMapper extends BaseMapper<ChatRoom> {
-    @Insert("INSERT INTO chatrooms (name, avatar) VALUES (#{name}, 'https://userpic.codeforces.org/no-title.jpg')")
+    @Insert("INSERT INTO chatroom (chatname, avatar) " +
+            "VALUES (#{name}, 'https://userpic.codeforces.org/no-title.jpg')")
     void CreateChatRoom(String name);
 
-    @Delete("DELETE FROM chatrooms WHERE id = #{Id}")
+    @Delete("DELETE FROM chatroom " +
+            "WHERE chatid = #{Id}")
     void deleteChatRoomById(String Id);
 
-    @Delete("DELETE FROM chatrooms_users WHERE chatroom_id = #{chatRoomId}")
+    @Delete("DELETE FROM chat " +
+            "WHERE chatid = #{chatRoomId}")
     void deleteChatRoomRelatedById(String chatRoomId);
 
-    @Insert("INSERT INTO chatroom_users (user_id, chatroom_id) VALUES (#{userId}, #{chatRoomId})")
+    @Insert("INSERT INTO chat (userid, chatid) " +
+            "VALUES (#{userId}, #{chatRoomId})")
     void addUserToChatRoom(String userId, String chatRoomId);
 
-    @Delete("DELETE FROM chatroom_users WHERE chatroom_id = #{chatRoomId} AND user_id = #{userId}")
+    @Delete("DELETE FROM chat " +
+            "WHERE chatid = #{chatRoomId} AND userid = #{userId}")
     void deleteUserFromChatRoom(String chatRoomId, String userId);
 
-    @Select("SELECT * FROM chatrooms WHERE id = #{Id}")
+    @Select("SELECT * FROM chatroom " +
+            "WHERE chatid = #{Id}")
     ChatRoom getChatRoomById(String Id);
 
-    @Select("SELECT chatroom_id FROM chatroom_users WHERE user_id = #{userId}")
+    @Select("SELECT chatid " +
+            "FROM chat " +
+            "WHERE userid = #{userId}")
     List<String> getChatRoomsByUserId(String userId);
 
-    @Select("SELECT user_id FROM chatroom_users WHERE chatroom_id = #{chatRoomId}")
+    @Select("SELECT userid " +
+            "FROM chat " +
+            "WHERE chatid = #{chatRoomId}")
     List<String> getUsersByChatRoomId(String chatRoomId);
 
-    @Select("SELECT * FROM chatrooms WHERE name = #{chatRoomName}")
+    @Select("SELECT * " +
+            "FROM chatroom " +
+            "WHERE chatname = #{chatRoomName}")
     ChatRoom getChatRoomByName(String chatRoomName);
 }

@@ -9,10 +9,9 @@ import java.sql.Timestamp;
 @Setter
 public class Message {
     private String id;
-    private String type;
+    private String chatid;
+    private String messagetype;
     private String content;
-    private String senderId;
-    private String chatRoomId;
     private Timestamp timestamp;
-    private String filename;
+    private String URL;
 }

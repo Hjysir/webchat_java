@@ -10,9 +10,10 @@ import java.util.List;
 
 public interface MessageMapper extends BaseMapper<Message> {
 
-    @Insert("INSERT INTO messages (id, type, content, senderId, chatRoomId, timestamp, filename) VALUES (#{id}, #{type}, #{content}, #{senderId}, #{chatRoomId}, #{timestamp}, #{filename})")
+    @Insert("INSERT INTO messages (id, chatid, content, timestamp, messagetype, URL) " +
+            "VALUES (#{id}, #{chatid}, #{content}, #{timestamp}, #{messagetype}, #{URL})")
     void insertMessage(Message message);
 
-    @Select("SELECT * FROM messages WHERE chatRoomId = #{chatRoomId}")
-    List<Message> getMessagesByChatRoomId(String chatRoomId);
+    @Select("SELECT * FROM messages WHERE chatid = #{chatid}")
+    List<Message> getMessagesByChatRoomId(String chatid);
 }
