@@ -10,9 +10,9 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 public interface ChatRoomMapper extends BaseMapper<ChatRoom> {
-    @Insert("INSERT INTO chatroom (chatname, avatar) " +
-            "VALUES (#{name}, 'https://userpic.codeforces.org/no-title.jpg')")
-    void CreateChatRoom(String name);
+    @Insert("INSERT INTO chatroom (chatid, chatname, avatar) " +
+            "VALUES (#{chatid}, #{name}, 'https://userpic.codeforces.org/no-title.jpg')")
+    void CreateChatRoom(String chatid, String name);
 
     @Delete("DELETE FROM chatroom " +
             "WHERE chatid = #{Id}")

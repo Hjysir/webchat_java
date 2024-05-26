@@ -3,6 +3,7 @@ package com.project.webchat_java.service;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.webchat_java.component.SnowflakeIdWorker;
 import com.project.webchat_java.dto.RequestDto;
 import com.project.webchat_java.entity.User;
 import com.project.webchat_java.mapper.UserMapper;
@@ -17,12 +18,14 @@ public class UserService {
     private UserMapper userMapper;
     private RedisService redisService;
     private CommenService commenService;
+    private SnowflakeIdWorker snowflakeIdWorker;
 
     @Autowired
-    public UserService(UserMapper userMapper, RedisService redisService, CommenService commenService) {
+    public UserService(UserMapper userMapper, RedisService redisService, CommenService commenService, SnowflakeIdWorker snowflakeIdWorker) {
         this.userMapper = userMapper;
         this.redisService = redisService;
         this.commenService = commenService;
+        this.snowflakeIdWorker = snowflakeIdWorker;
     }
 
     public boolean CheckOnPassWord(String input, String userPassWord) {
@@ -42,6 +45,8 @@ public class UserService {
         } else {
 
             userinfo.setPassword(String.valueOf(DigestUtil.md5Hex(userinfo.getPassword())));
+            userinfo.setId(String.valueOf(snowflakeIdWorker.nextId()));
+
             userMapper.insertUser(userinfo);
 
             requestDto.setCode(200);
