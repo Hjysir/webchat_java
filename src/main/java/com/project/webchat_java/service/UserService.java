@@ -9,6 +9,7 @@ import com.project.webchat_java.entity.User;
 import com.project.webchat_java.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,18 +19,21 @@ public class UserService {
     private UserMapper userMapper;
     private RedisService redisService;
     private CommenService commenService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(UserMapper userMapper,
                        RedisService redisService,
-                       CommenService commenService) {
+                       CommenService commenService,
+                       PasswordEncoder passwordEncoder) {
         this.userMapper = userMapper;
         this.redisService = redisService;
         this.commenService = commenService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public boolean CheckOnPassWord(String input, String userPassWord) {
-        return String.valueOf(input.hashCode()).equals(userPassWord);
+        return passwordEncoder.matches(input, userPassWord);
     }
 
     public RequestDto userRegister(User userinfo) {
@@ -43,7 +47,7 @@ public class UserService {
             requestDto.setMessage("用户名已存在");
 
         } else {
-            userinfo.setPassword(String.valueOf(DigestUtil.md5Hex(userinfo.getPassword())));
+            userinfo.setPassword(String.valueOf(passwordEncoder.encode(userinfo.getPassword())));
 
             SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker(0, 0);
 
@@ -79,9 +83,12 @@ public class UserService {
         else {
             String password = String.valueOf(user.getPassword());
             // 密码处理
-            password = DigestUtil.md5Hex(password);
+            password = passwordEncoder.encode(password);
 
-            if (CheckOnPassWord(userinfo.getPassword(), password)) {
+            System.out.println(password);
+            System.out.println(user.getPassword());
+
+            if (CheckOnPassWord(user.getPassword(), password)) {
                 requestDto.setCode(200);
                 requestDto.setMessage("登录成功");
                 requestDto.setData(user);
