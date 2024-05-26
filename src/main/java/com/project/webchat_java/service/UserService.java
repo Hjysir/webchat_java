@@ -43,9 +43,6 @@ public class UserService {
             requestDto.setMessage("用户名已存在");
 
         } else {
-
-
-
             userinfo.setPassword(String.valueOf(DigestUtil.md5Hex(userinfo.getPassword())));
 
             SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker(0, 0);
@@ -81,6 +78,8 @@ public class UserService {
         }
         else {
             String password = String.valueOf(user.getPassword());
+            // 密码处理
+            password = DigestUtil.md5Hex(password);
 
             if (CheckOnPassWord(userinfo.getPassword(), password)) {
                 requestDto.setCode(200);
