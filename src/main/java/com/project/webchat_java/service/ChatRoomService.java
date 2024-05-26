@@ -23,7 +23,6 @@ public class ChatRoomService {
     private MessageService messageService;
     private CommenService commenService;
     private UserService userService;
-    private SnowflakeIdWorker snowflakeIdWorker;
 
     private void setChatRooms(List<ChatRoom> chatRooms) {
         if (chatRooms.isEmpty()) {
@@ -52,7 +51,10 @@ public class ChatRoomService {
     }
 
     @Autowired
-    public ChatRoomService(ChatRoomMapper chatRoomMapper, MessageService messageService, CommenService commenService, UserService userService) {
+    public ChatRoomService(ChatRoomMapper chatRoomMapper,
+                           MessageService messageService,
+                           CommenService commenService,
+                           UserService userService) {
         this.chatRoomMapper = chatRoomMapper;
         this.messageService = messageService;
         this.commenService = commenService;
@@ -61,7 +63,7 @@ public class ChatRoomService {
 
     public ChatRoom createChatRoom(String username, String chatRoomName) {
         log.info("createChatRoom:" + chatRoomName + "with user:" + username);
-
+        SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker(0, 0);
         long chatRoomId = snowflakeIdWorker.nextId();
         chatRoomMapper.CreateChatRoom(String.valueOf(chatRoomId), chatRoomName);
 

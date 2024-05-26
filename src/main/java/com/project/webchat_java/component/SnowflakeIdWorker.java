@@ -1,10 +1,21 @@
 package com.project.webchat_java.component;
 
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 public class SnowflakeIdWorker {
     private long workerId;
     private long datacenterId;
+
+    @Value("${snowflake.workerId}")
+    public void setWorkerId(long workerId) {
+        this.workerId = workerId;
+    }
+
+    @Value("${snowflake.datacenterId}")
+    public void setDatacenterId(long datacenterId) {
+        this.datacenterId = datacenterId;
+    }
+
     private long sequence = 0L;
 
     private long twepoch = 1288834974657L;

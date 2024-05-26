@@ -18,10 +18,11 @@ public class UserService {
     private UserMapper userMapper;
     private RedisService redisService;
     private CommenService commenService;
-    private SnowflakeIdWorker snowflakeIdWorker;
 
     @Autowired
-    public UserService(UserMapper userMapper, RedisService redisService, CommenService commenService) {
+    public UserService(UserMapper userMapper,
+                       RedisService redisService,
+                       CommenService commenService) {
         this.userMapper = userMapper;
         this.redisService = redisService;
         this.commenService = commenService;
@@ -44,6 +45,9 @@ public class UserService {
         } else {
 
             userinfo.setPassword(String.valueOf(DigestUtil.md5Hex(userinfo.getPassword())));
+
+            SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker(0, 0);
+
             userinfo.setId(String.valueOf(snowflakeIdWorker.nextId()));
 
             userMapper.insertUser(userinfo);
