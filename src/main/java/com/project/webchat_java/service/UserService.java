@@ -21,11 +21,10 @@ public class UserService {
     private SnowflakeIdWorker snowflakeIdWorker;
 
     @Autowired
-    public UserService(UserMapper userMapper, RedisService redisService, CommenService commenService, SnowflakeIdWorker snowflakeIdWorker) {
+    public UserService(UserMapper userMapper, RedisService redisService, CommenService commenService) {
         this.userMapper = userMapper;
         this.redisService = redisService;
         this.commenService = commenService;
-        this.snowflakeIdWorker = snowflakeIdWorker;
     }
 
     public boolean CheckOnPassWord(String input, String userPassWord) {

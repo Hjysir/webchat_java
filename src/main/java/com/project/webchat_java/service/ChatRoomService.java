@@ -52,12 +52,11 @@ public class ChatRoomService {
     }
 
     @Autowired
-    public ChatRoomService(ChatRoomMapper chatRoomMapper, MessageService messageService, CommenService commenService, UserService userService, SnowflakeIdWorker snowflakeIdWorker) {
+    public ChatRoomService(ChatRoomMapper chatRoomMapper, MessageService messageService, CommenService commenService, UserService userService) {
         this.chatRoomMapper = chatRoomMapper;
         this.messageService = messageService;
         this.commenService = commenService;
         this.userService = userService;
-        this.snowflakeIdWorker = snowflakeIdWorker;
     }
 
     public ChatRoom createChatRoom(String username, String chatRoomName) {

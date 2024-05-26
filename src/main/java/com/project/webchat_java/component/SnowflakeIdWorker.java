@@ -2,7 +2,6 @@ package com.project.webchat_java.component;
 
 import org.springframework.stereotype.Component;
 
-@Component
 public class SnowflakeIdWorker {
     private long workerId;
     private long datacenterId;
