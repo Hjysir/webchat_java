@@ -20,19 +20,19 @@ public class ChatController {
         this.chatRoomService = chatRoomService;
     }
 
-    @PostMapping("/api/createchatroom/{userId}")
-    public ChatRoom createChatRoom(@PathVariable("userId") String userId, @RequestBody CreateDto chatRoom) {
-        return chatRoomService.createChatRoom(userId, chatRoom.getName());
+    @PostMapping("/api/createchatroom/{userId}/{flag}")
+    public ChatRoom createChatRoom(@PathVariable("userId") String userId, @PathVariable("flag") String flag, @RequestBody CreateDto chatRoom) {
+        return chatRoomService.createChatRoom(userId, flag, chatRoom.getChatname());
     }
 
     @PostMapping("/api/joinchatroom/{username}")
     public ChatRoom joinChatRoom(@PathVariable("username") String username, @RequestBody CreateDto chatRoom) {
-        return chatRoomService.addUserToChatRoom(username, chatRoom.getName());
+        return chatRoomService.addUserToChatRoom(username, chatRoom.getChatname());
     }
 
     @DeleteMapping("/api/leavechatroom/{username}")
     public RequestDto leaveChatRoom(@PathVariable("username") String username, @RequestBody CreateDto chatRoom) {
-        return chatRoomService.removeUserFromChatRoom(username, chatRoom.getName());
+        return chatRoomService.removeUserFromChatRoom(username, chatRoom.getChatname());
     }
 
     @DeleteMapping("/api/deletechatroom/{chatRoomName}")

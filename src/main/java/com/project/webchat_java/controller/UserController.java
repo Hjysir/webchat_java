@@ -34,7 +34,7 @@ public class UserController {
 
     @PostMapping("/api/updatepassword/{username}")
     public void updatePassword(@PathVariable("username") String username, @RequestBody UserDto password) {
-        userService.updateUserPassword(password.getNewPassword(), username);
+        userService.updateUserPassword(password.getPassword(), username);
     }
 
     @PostMapping("/api/logout/{username}")

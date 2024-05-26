@@ -61,11 +61,15 @@ public class ChatRoomService {
         this.userService = userService;
     }
 
-    public ChatRoom createChatRoom(String username, String chatRoomName) {
+    public ChatRoom createChatRoom(String username, String flag, String chatRoomName) {
         log.info("createChatRoom:" + chatRoomName + "with user:" + username);
         SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker(0, 0);
         long chatRoomId = snowflakeIdWorker.nextId();
-        chatRoomMapper.CreateChatRoom(String.valueOf(chatRoomId), chatRoomName);
+
+        System.out.println("chatRoomId:" + chatRoomId);
+        System.out.println("chatRoomName:" + chatRoomName);
+
+        chatRoomMapper.CreateChatRoom(String.valueOf(chatRoomId), chatRoomName, flag);
 
         ChatRoom chatRoom = chatRoom = chatRoomMapper.getChatRoomByName(chatRoomName);
         String userId = commenService.getUserId(username);; // 获取用户id

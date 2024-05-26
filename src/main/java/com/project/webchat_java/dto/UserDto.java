@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserDto {
-    private String newPassword;
+    private String password;
 }

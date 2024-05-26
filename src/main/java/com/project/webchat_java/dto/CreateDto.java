@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateDto {
-    private String name;
+    private String chatname;
 }
