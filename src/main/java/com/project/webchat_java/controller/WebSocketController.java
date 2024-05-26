@@ -14,6 +14,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 
 @Slf4j
@@ -29,6 +30,8 @@ public class WebSocketController {
     @Qualifier("redisTemplate")
     @Autowired
     private RedisTemplate redisTemplate;
+
+    private ExecutorService executorService;
 
     @MessageMapping("/ws/{chatroom}/{username}")
     @SendTo("/topic/{chatroom}")
@@ -46,9 +49,12 @@ public class WebSocketController {
             List<Message> messages = redisTemplate.opsForList().range(chatroom, 0, -1);
             // 存储到MySQL的逻辑
 
-            for (Message msg : messages) {
-                messageService.insertMessage(msg);
-            }
+            // 异步存储到MySQL, 避免阻塞WebSocket线程
+            executorService.submit(() -> {
+                for (Message msg : messages) {
+                    messageService.insertMessage(msg);
+                }
+            });
 
             // 清空Redis中的列表
             redisTemplate.delete(chatroom);
