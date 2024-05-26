@@ -5,7 +5,6 @@ import com.project.webchat_java.dto.RequestDto;
 import com.project.webchat_java.dto.UserDto;
 import com.project.webchat_java.entity.User;
 import com.project.webchat_java.service.UserService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

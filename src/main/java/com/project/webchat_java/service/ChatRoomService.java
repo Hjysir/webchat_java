@@ -2,6 +2,7 @@ package com.project.webchat_java.service;
 
 import com.project.webchat_java.dto.RequestDto;
 import com.project.webchat_java.entity.ChatRoom;
+import com.project.webchat_java.entity.Message;
 import com.project.webchat_java.entity.User;
 import com.project.webchat_java.mapper.ChatRoomMapper;
 import io.micrometer.common.lang.Nullable;
@@ -133,5 +134,13 @@ public class ChatRoomService {
             setChatRooms(chatRooms);
         }
         return chatRooms;
+    }
+
+    public List<Message> getHistory(String chatname) {
+        return messageService.getMessagesInChatRoom(chatname);
+    }
+
+    public List<Message> getHistoryByTag(String chatname, String tag) {
+        return messageService.getMessagesInChatRoomByTag(chatname, tag);
     }
 }

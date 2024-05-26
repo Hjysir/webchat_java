@@ -14,6 +14,12 @@ public interface MessageMapper extends BaseMapper<Message> {
             "VALUES (#{id}, #{chatid}, #{content}, #{timestamp}, #{messagetype}, #{URL})")
     void insertMessage(Message message);
 
-    @Select("SELECT * FROM messages WHERE chatid = #{chatid}")
-    List<Message> getMessagesByChatRoomId(String chatid);
+    @Select("SELECT * FROM messages " +
+            "WHERE chatname = #{chatname}")
+    List<Message> getMessagesByChatRoomName(String chatname);
+
+    @Select("SELECT * FROM messages " +
+            "WHERE chatname = #{chatname} " +
+            "AND content LIKE CONCAT('%', #{tag}, '%')")
+    List<Message> getMessagesByChatRoomNameAndTag(String chatname, String tag);
 }

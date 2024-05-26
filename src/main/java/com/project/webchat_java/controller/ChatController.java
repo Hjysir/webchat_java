@@ -3,8 +3,8 @@ package com.project.webchat_java.controller;
 import com.project.webchat_java.dto.CreateDto;
 import com.project.webchat_java.dto.RequestDto;
 import com.project.webchat_java.entity.ChatRoom;
+import com.project.webchat_java.entity.Message;
 import com.project.webchat_java.service.ChatRoomService;
-import com.project.webchat_java.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,12 +14,10 @@ import java.util.List;
 public class ChatController {
 
     private final ChatRoomService chatRoomService;
-    private final MessageService messageService;
 
     @Autowired
-    public ChatController(ChatRoomService chatRoomService, MessageService messageService) {
+    public ChatController(ChatRoomService chatRoomService) {
         this.chatRoomService = chatRoomService;
-        this.messageService = messageService;
     }
 
     @PostMapping("/api/createchatroom/{userId}")
@@ -50,6 +48,16 @@ public class ChatController {
     @GetMapping("/api/getchatlist/{userName}")
     public List<ChatRoom> getChatList(@PathVariable("userName") String userName) {
         return chatRoomService.getChatRoomsByUserId(userName);
+    }
+
+    @GetMapping("/api/gethistory/{chatname}")
+    public List<Message> getHistory(@PathVariable("chatname") String chatname) {
+        return chatRoomService.getHistory(chatname);
+    }
+
+    @GetMapping("/api/gethistory/{chatname}/{tag}")
+    public List<Message> getHistoryByTag(@PathVariable("chatname") String chatname, @PathVariable("tag") String tag) {
+        return chatRoomService.getHistoryByTag(chatname, tag);
     }
 
 }

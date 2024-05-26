@@ -18,12 +18,15 @@ public class MessageService {
         this.messageMapper = messageMapper;
     }
 
-    public List<Message> getMessagesInChatRoom(String chatRoomId) {
-        return messageMapper.getMessagesByChatRoomId(chatRoomId);
+    public List<Message> getMessagesInChatRoom(String chatRoomName) {
+        return messageMapper.getMessagesByChatRoomName(chatRoomName);
     }
 
     public void insertMessage(Message message) {
         messageMapper.insertMessage(message);
     }
 
+    public List<Message> getMessagesInChatRoomByTag(String chatRoomName, String tag) {
+        return messageMapper.getMessagesByChatRoomNameAndTag(chatRoomName, tag);
+    }
 }
