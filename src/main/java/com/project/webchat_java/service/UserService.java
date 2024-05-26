@@ -44,6 +44,8 @@ public class UserService {
 
         } else {
 
+
+
             userinfo.setPassword(String.valueOf(DigestUtil.md5Hex(userinfo.getPassword())));
 
             SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker(0, 0);

@@ -18,8 +18,8 @@ public interface UserMapper extends BaseMapper<User> {
             "WHERE id = #{id}")
     User getUserById(String id);
 
-    @Insert("INSERT INTO users (name, password, email, avatar, phone) " +
-            "VALUES (#{name}, #{password}, #{email}, 'https://userpic.codeforces.org/no-title.jpg', phone)")
+    @Insert("INSERT INTO user (id, name, password, email, avatar, phone) " +
+            "VALUES (#{id}, #{name}, #{password}, #{email}, 'https://userpic.codeforces.org/no-title.jpg', 12312341234)")
     void insertUser(User user);
 
     @Select("SELECT * " +
