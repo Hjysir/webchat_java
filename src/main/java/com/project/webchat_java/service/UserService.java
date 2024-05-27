@@ -1,6 +1,5 @@
 package com.project.webchat_java.service;
 
-import cn.hutool.crypto.digest.DigestUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.webchat_java.component.SnowflakeIdWorker;
