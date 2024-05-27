@@ -1,6 +1,5 @@
 package com.project.webchat_java.controller;
 
-import com.project.webchat_java.entity.Message;
 import com.project.webchat_java.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

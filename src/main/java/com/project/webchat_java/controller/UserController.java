@@ -28,18 +28,18 @@ public class UserController {
     }
 
     @PostMapping("/api/updateavatar/{username}")
-    public void updateAvatar(@PathVariable("username") String username, @RequestBody String avatar) {
-        userService.updateUserAvatar(avatar, username);
+    public RequestDto updateAvatar(@PathVariable("username") String username, @RequestBody String avatar) {
+        return userService.updateUserAvatar(avatar, username);
     }
 
     @PostMapping("/api/updatepassword/{username}")
-    public void updatePassword(@PathVariable("username") String username, @RequestBody UserDto password) {
-        userService.updateUserPassword(password.getPassword(), username);
+    public RequestDto updatePassword(@PathVariable("username") String username, @RequestBody UserDto password) {
+        return userService.updateUserPassword(password.getPassword(), username);
     }
 
     @PostMapping("/api/logout/{username}")
-    public void logout(@PathVariable("username") String username) {
-        userService.userLogout(username);
+    public RequestDto logout(@PathVariable("username") String username) {
+        return userService.userLogout(username);
     }
 
     @GetMapping("/api/getuser/{username}")

@@ -114,17 +114,31 @@ public class UserService {
         return requestDto;
     }
 
-    public void updateUserPassword(String password, String username) {
+    public RequestDto updateUserPassword(String password, String username) {
         String userId = commenService.getUserId(username);
+        if (userId == null) {
+            return new RequestDto().fail(500, "用户不存在", null);
+        }
         userMapper.updateUserPassword(String.valueOf(password.hashCode()), userId);
+        return new RequestDto().success();
     }
 
-    public void updateUserAvatar(String avatar, String username) {
+    public RequestDto updateUserAvatar(String avatar, String username) {
         String userId = commenService.getUserId(username);
+        if (userId == null) {
+            return new RequestDto().fail(500, "用户不存在", null);
+        }
         userMapper.updateUserAvatar(avatar, userId);
+        return new RequestDto().success();
     }
 
-    public void userLogout(String username) { redisService.delete(username); }
+    public RequestDto userLogout(String username) {
+        if (redisService.get(username) == null) {
+            return new RequestDto().fail(500, "用户未登录", null);
+        }
+        redisService.delete(username);
+        return new RequestDto().success();
+    }
 
     public User getUserById(String userId) {
         return userMapper.getUserById(userId);

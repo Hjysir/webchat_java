@@ -20,18 +20,18 @@ public class ChatController {
         this.chatRoomService = chatRoomService;
     }
 
-    @PostMapping("/api/createchatroom/{userId}/{flag}")
-    public ChatRoom createChatRoom(@PathVariable("userId") String userId, @PathVariable("flag") String flag, @RequestBody CreateDto chatRoom) {
-        return chatRoomService.createChatRoom(userId, flag, chatRoom.getChatname());
+    @PostMapping("/api/createchatroom/{userName}/{flag}")
+    public RequestDto createChatRoom(@PathVariable("userName") String userName, @PathVariable("flag") String flag, @RequestBody CreateDto chatRoom) {
+        return chatRoomService.createChatRoom(userName, flag, chatRoom.getChatname());
     }
 
-    @PostMapping("/api/joinchatroom/{username}")
-    public ChatRoom joinChatRoom(@PathVariable("username") String username, @RequestBody CreateDto chatRoom) {
+    @PostMapping("/api/joinchatroom/{userName}")
+    public RequestDto joinChatRoom(@PathVariable("userName") String username, @RequestBody CreateDto chatRoom) {
         return chatRoomService.addUserToChatRoom(username, chatRoom.getChatname());
     }
 
-    @DeleteMapping("/api/leavechatroom/{username}")
-    public RequestDto leaveChatRoom(@PathVariable("username") String username, @RequestBody CreateDto chatRoom) {
+    @DeleteMapping("/api/leavechatroom/{userName}")
+    public RequestDto leaveChatRoom(@PathVariable("userName") String username, @RequestBody CreateDto chatRoom) {
         return chatRoomService.removeUserFromChatRoom(username, chatRoom.getChatname());
     }
 
@@ -50,14 +50,19 @@ public class ChatController {
         return chatRoomService.getChatRoomsByUserId(userName);
     }
 
-    @GetMapping("/api/gethistory/{chatname}")
-    public List<Message> getHistory(@PathVariable("chatname") String chatname) {
-        return chatRoomService.getHistory(chatname);
+    @GetMapping("/api/gethistory/{chatName}")
+    public List<Message> getHistory(@PathVariable("chatName") String chatName) {
+        return chatRoomService.getHistory(chatName);
     }
 
-    @GetMapping("/api/gethistory/{chatname}/{tag}")
-    public List<Message> getHistoryByTag(@PathVariable("chatname") String chatname, @PathVariable("tag") String tag) {
-        return chatRoomService.getHistoryByTag(chatname, tag);
+    @GetMapping("/api/gethistory/{chatName}/{tag}")
+    public List<Message> getHistoryByTag(@PathVariable("chatName") String chatName, @PathVariable("tag") String tag) {
+        return chatRoomService.getHistoryByTag(chatName, tag);
+    }
+
+    @GetMapping("/api/getmessage/{userName}")
+    public Message getMessage(@PathVariable("userName") String userName) {
+        return chatRoomService.getMessageById(userName);
     }
 
 }

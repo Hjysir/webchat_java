@@ -42,12 +42,12 @@ public class ChatRoomService {
 
     private void initUsersAndMessages(ChatRoom chatRoom) {
         log.info("initUsersAndMessages:" + chatRoom.getChatname());
-        List<String> userIds = chatRoomMapper.getUsersByChatRoomId(chatRoom.getChatid());
+        ChatRoom chatroom = chatRoomMapper.getChatRoomByName(chatRoom.getChatname());
+        List<String> userIds = chatRoomMapper.getUsersByChatRoomId(chatroom.getChatid());
         for (String userId : userIds) {
             User user = userService.getUserById(userId);
             chatRoom.addUser(user);
         }
-        chatRoom.setMessages(messageService.getMessagesInChatRoom(chatRoom.getChatid()));
     }
 
     @Autowired
@@ -61,51 +61,62 @@ public class ChatRoomService {
         this.userService = userService;
     }
 
-    public ChatRoom createChatRoom(String username, String flag, String chatRoomName) {
-        log.info("createChatRoom:" + chatRoomName + "with user:" + username);
+    public RequestDto createChatRoom(String username, String flag, String chatRoomName) {
+
         SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker(0, 0);
         long chatRoomId = snowflakeIdWorker.nextId();
 
+        System.out.println("createChatRoom:" + chatRoomName + "with user:" + username);
         System.out.println("chatRoomId:" + chatRoomId);
         System.out.println("chatRoomName:" + chatRoomName);
 
+        if (chatRoomMapper.getChatRoomByName(chatRoomName) != null) {
+            return new RequestDto().fail(500, "聊天室已存在", null);
+        }
+
         chatRoomMapper.CreateChatRoom(String.valueOf(chatRoomId), chatRoomName, flag);
 
-        ChatRoom chatRoom = chatRoom = chatRoomMapper.getChatRoomByName(chatRoomName);
+        ChatRoom chatRoom = chatRoomMapper.getChatRoomByName(chatRoomName);
         String userId = commenService.getUserId(username);; // 获取用户id
         chatRoomMapper.addUserToChatRoom(userId, chatRoom.getChatid());
         setChatRoom(chatRoom);
 
-        return chatRoom;
+        return new RequestDto().success();
     }
 
-    public ChatRoom addUserToChatRoom(String user, String chatRoomName) {
+    public RequestDto addUserToChatRoom(String user, String chatRoomName) {
         System.out.println("addUserToChatRoom:" + chatRoomName + "with user:" + user);
         String chatRoomId = chatRoomMapper.getChatRoomByName(chatRoomName).getChatid();
 
         if (chatRoomId == null) {
-            return null;
+            return new RequestDto().fail(500, "聊天室不存在", null);
         }
 
         String userId = commenService.getUserId(user); // 获取用户id
         if (chatRoomMapper.getUsersByChatRoomId(chatRoomId).contains(userId)) {
-            return null;
+            return new RequestDto().fail(500, "用户已在聊天室中", null);
         }
 
         chatRoomMapper.addUserToChatRoom(userId, chatRoomId);
         ChatRoom chatRoom = chatRoomMapper.getChatRoomById(chatRoomId);
         setChatRoom(chatRoom);
 
-        return chatRoom;
+        return new RequestDto().success();
     }
 
     @Transactional
     public RequestDto deleteChatRoom(String chatRoomName) {
         log.info("deleteChatRoom:" + chatRoomName);
-        String chatRoomId = String.valueOf(chatRoomMapper.getChatRoomById(chatRoomName).getChatid());
+
+        ChatRoom chatRoom = chatRoomMapper.getChatRoomByName(chatRoomName);
+        if (chatRoom == null) {
+            return new RequestDto().fail(500, "聊天室不存在", null);
+        }
+        String chatRoomId = chatRoom.getChatid();
 
         chatRoomMapper.deleteChatRoomRelatedById(chatRoomId);
         chatRoomMapper.deleteChatRoomById(chatRoomId);
+
         RequestDto requestDto = new RequestDto();
 
         return requestDto.success();
@@ -170,5 +181,10 @@ public class ChatRoomService {
 
     public List<Message> getHistoryByTag(String chatname, String tag) {
         return messageService.getMessagesInChatRoomByTag(chatname, tag);
+    }
+
+    public Message getMessageById(String userName) {
+        String userId = commenService.getUserId(userName);
+        return messageService.getMessageById(userId);
     }
 }

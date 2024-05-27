@@ -9,20 +9,20 @@ import java.util.List;
 
 public interface MessageMapper extends BaseMapper<Message> {
 
-    @Insert("INSERT INTO messages (id, chatid, content, timestamp, messagetype, URL) " +
+    @Insert("INSERT INTO message (id, chatid, content, timestamp, messagetype, URL) " +
             "VALUES (#{id}, #{chatid}, #{content}, #{timestamp}, #{messagetype}, #{URL})")
     void insertMessage(Message message);
 
-    @Select("SELECT * FROM messages " +
-            "WHERE chatname = #{chatname}")
-    List<Message> getMessagesByChatRoomName(String chatname);
+    @Select("SELECT * FROM message " +
+            "WHERE chatid = #{chatid}")
+    List<Message> getMessagesByChatRoomId(String chatid);
 
-    @Select("SELECT * FROM messages " +
-            "WHERE chatname = #{chatname} " +
+    @Select("SELECT * FROM message " +
+            "WHERE chatid = #{chatid} " +
             "AND content LIKE CONCAT('%', #{tag}, '%')")
-    List<Message> getMessagesByChatRoomNameAndTag(String chatname, String tag);
+    List<Message> getMessagesByChatRoomIdAndTag(String chatid, String tag);
 
-    @Select("SELECT * FROM messages " +
-            "WHERE id = #{messageId}")
-    Message getMessageById(String messageId);
+    @Select("SELECT * FROM message " +
+            "WHERE id = #{Id}")
+    Message getMessageByUserId(String Id);
 }
