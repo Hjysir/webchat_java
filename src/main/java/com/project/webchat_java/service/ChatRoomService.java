@@ -88,7 +88,12 @@ public class ChatRoomService {
 
     public RequestDto addUserToChatRoom(String user, String chatRoomName) {
         System.out.println("addUserToChatRoom:" + chatRoomName + "with user:" + user);
-        String chatRoomId = chatRoomMapper.getChatRoomByName(chatRoomName).getChatid();
+
+        ChatRoom chatRoom = chatRoomMapper.getChatRoomByName(chatRoomName);
+        if (chatRoom == null) {
+            return new RequestDto().fail(500, "聊天室不存在", null);
+        }
+        String chatRoomId = chatRoom.getChatid();
 
         if (chatRoomId == null) {
             return new RequestDto().fail(500, "聊天室不存在", null);
@@ -100,7 +105,7 @@ public class ChatRoomService {
         }
 
         chatRoomMapper.addUserToChatRoom(userId, chatRoomId);
-        ChatRoom chatRoom = chatRoomMapper.getChatRoomById(chatRoomId);
+        chatRoom = chatRoomMapper.getChatRoomById(chatRoomId);
         setChatRoom(chatRoom);
 
         return new RequestDto().success();
