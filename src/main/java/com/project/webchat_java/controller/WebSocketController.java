@@ -39,6 +39,9 @@ public class WebSocketController {
                                   @DestinationVariable String username,
                                   Message message) {
 
+        // 输出看看消息是什么
+        log.info("chatroom = " + chatroom + "发到了" + chatroom + "的聊天室,订阅地址为/topic/" + chatroom + "内容为: " + username + ": " + message);
+
         // 发送消息给订阅了聊天室的所有用户
         messagingTemplate.convertAndSend("/topic/" + chatroom, username + ": " + message);
 

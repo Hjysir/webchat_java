@@ -71,6 +71,7 @@ public class ChatRoomService {
         System.out.println("chatRoomName:" + chatRoomName);
 
         if (chatRoomMapper.getChatRoomByName(chatRoomName) != null) {
+            System.out.println("聊天室已存在");
             return new RequestDto().fail(500, "聊天室已存在", null);
         }
 
@@ -81,6 +82,7 @@ public class ChatRoomService {
         chatRoomMapper.addUserToChatRoom(userId, chatRoom.getChatid());
         setChatRoom(chatRoom);
 
+        System.out.println("聊天室创建成功");
         return new RequestDto().success();
     }
 
