@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 public class Message {
     private String id;
     private String chatid;
-    private String messagetype;
+    private int messagetype;
     private String content;
     private Timestamp timestamp;
     private String URL;

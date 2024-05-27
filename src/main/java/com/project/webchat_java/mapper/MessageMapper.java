@@ -22,4 +22,8 @@ public interface MessageMapper extends BaseMapper<Message> {
             "WHERE chatname = #{chatname} " +
             "AND content LIKE CONCAT('%', #{tag}, '%')")
     List<Message> getMessagesByChatRoomNameAndTag(String chatname, String tag);
+
+    @Select("SELECT * FROM messages " +
+            "WHERE id = #{messageId}")
+    Message getMessageById(String messageId);
 }

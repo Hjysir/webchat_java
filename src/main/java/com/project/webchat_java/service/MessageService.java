@@ -29,4 +29,8 @@ public class MessageService {
     public List<Message> getMessagesInChatRoomByTag(String chatRoomName, String tag) {
         return messageMapper.getMessagesByChatRoomNameAndTag(chatRoomName, tag);
     }
+
+    public Message getMessage(String messageId) {
+        return messageMapper.getMessageById(messageId);
+    }
 }
