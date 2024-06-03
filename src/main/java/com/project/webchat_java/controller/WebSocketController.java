@@ -1,7 +1,10 @@
 package com.project.webchat_java.controller;
 
+import cn.hutool.json.JSONUtil;
+import cn.hutool.json.ObjectMapper;
 import com.project.webchat_java.entity.Message;
 import com.project.webchat_java.service.MessageService;
+import com.project.webchat_java.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,7 +15,9 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -21,11 +26,16 @@ import java.util.concurrent.ExecutorService;
 @Controller
 public class WebSocketController {
 
-    private MessageService messageService;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
-    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private MessageService messageService;
+
+    @Autowired
+    private UserService userService;
+
 
     @Qualifier("redisTemplate")
     @Autowired
@@ -37,32 +47,30 @@ public class WebSocketController {
     @SendTo("/topic/{chatroom}")
     public void handleChatMessage(@DestinationVariable String chatroom,
                                   @DestinationVariable String username,
-                                  Message message) {
+                                  @RequestBody Message message) {
+
 
         // 输出看看消息是什么
-        log.info("chatroom = " + chatroom + "发到了" + chatroom + "的聊天室,订阅地址为/topic/" + chatroom + "内容为: " + username + ": " + message);
+        log.info("chatroom = " + chatroom + "发到了" + chatroom + "的聊天室,订阅地址为/topic/" + chatroom + "内容为: " + username + ": " + message.getContent());
 
         // 发送消息给订阅了聊天室的所有用户
-        messagingTemplate.convertAndSend("/topic/" + chatroom, username + ": " + message);
+        messagingTemplate.convertAndSend("/topic/" + chatroom, username + ": " + message.getContent());
 
-        // 将消息存储到Redis中
-        redisTemplate.opsForList().rightPush(chatroom, message);
-        // 如果消息数量超过128条，将消息存储到MySQL中
-        if (redisTemplate.opsForList().size(chatroom) >= 128) {
-            List<Message> messages = redisTemplate.opsForList().range(chatroom, 0, -1);
-            // 存储到MySQL的逻辑
 
-            // 异步存储到MySQL, 避免阻塞WebSocket线程
-            executorService.submit(() -> {
-                for (Message msg : messages) {
-                    messageService.insertMessage(msg);
-                }
-            });
 
-            // 清空Redis中的列表
+        if (message.getURL() == null) message.setURL("127.0.0.1");
+        // 把Message对象转换为JSON字符串
+        String msgJson = JSONUtil.toJsonStr(message);
+        // 把消息存入Redis
+        redisTemplate.opsForList().leftPush(chatroom, msgJson);
+
+        // 把消息存入数据库
+        message.setId(userService.getUserByUsername(username).getId());
+        messageService.insertMessage(message);
+
+        // 当redis内存大于128的时候，清空redis
+        if (redisTemplate.opsForList().size(chatroom) > 128) {
             redisTemplate.delete(chatroom);
         }
-
-        log.info("chatroom = " + chatroom + "发到了" + chatroom + "的聊天室,订阅地址为/topic/" + chatroom + "内容为: " + username + ": " + message);
     }
 }
