@@ -192,6 +192,8 @@ public class ChatRoomService {
 
     public Message getMessageById(String userName) {
         String userId = commenService.getUserId(userName);
-        return messageService.getMessageById(userId);
+        Message message = messageService.getMessageById(userId);
+        message.setId(userName);
+        return message;
     }
 }
